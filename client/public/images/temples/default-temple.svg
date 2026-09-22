@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" role="img" aria-label="Temple image not available">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f5c53"/>
+      <stop offset="100%" stop-color="#0b3d3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="600" fill="url(#bg)"/>
+  <g fill="#d99b32" opacity="0.9">
+    <!-- simple gopuram-style silhouette -->
+    <rect x="430" y="330" width="40" height="120" />
+    <polygon points="410,330 490,330 470,290 430,290" />
+    <polygon points="420,290 480,290 465,255 435,255" />
+    <polygon points="430,255 470,255 458,225 442,225" />
+    <circle cx="450" cy="205" r="10" />
+    <rect x="330" y="410" width="240" height="16" rx="2" />
+    <rect x="360" y="450" width="180" height="60" rx="2" />
+    <polygon points="345,410 555,410 450,360" />
+  </g>
+  <text x="450" y="545" font-family="Segoe UI, Arial, sans-serif" font-size="22" fill="#f7f5f0" text-anchor="middle" opacity="0.85">
+    DarshanEase
+  </text>
+</svg>
