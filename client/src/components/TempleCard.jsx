@@ -3,8 +3,8 @@ import { Clock, MapPin, ArrowRight } from "lucide-react";
 import { resolveImageUrl, DEFAULT_TEMPLE_IMAGE } from "../utils/imageUrl";
 
 const TempleCard = ({ temple }) => {
-  // const imgSrc = resolveImageUrl(temple.image);
-  const imgSrc = resolveImageUrl(temple.image || temple.imageUrl);
+   const imgSrc = resolveImageUrl(temple.image);
+  // const imgSrc = resolveImageUrl(temple.image || temple.imageUrl);
   return (
     <div className="card temple-card">
       <div className="temple-card-media">
