@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const darshanSlotSchema = new mongoose.Schema(
   {
     darshanName: { type: String, required: true, trim: true },

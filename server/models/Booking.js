@@ -15,6 +15,18 @@ const bookingSchema = new mongoose.Schema(
       enum: ["confirmed", "cancelled"],
       default: "confirmed",
     },
+    // Payment fields (added for Razorpay integration). Optional/backward-
+    // compatible: bookings created before this feature existed simply won't
+    // have razorpay ids, and default to "paid" so they keep behaving as
+    // already-confirmed, already-paid bookings.
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed"],
+      default: "paid",
+    },
+    razorpayOrderId: { type: String, default: "" },
+    razorpayPaymentId: { type: String, default: "" },
+    razorpaySignature: { type: String, default: "" },
   },
   { timestamps: true }
 );

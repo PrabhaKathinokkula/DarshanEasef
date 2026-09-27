@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getSlotById } from "../services/slotService";
-import { createBooking } from "../services/bookingService";
+import { createPaymentOrder, verifyPayment } from "../services/paymentService";
 import Spinner from "../components/Spinner";
 import ErrorState from "../components/ErrorState";
 import { formatDate } from "../utils/formatDate";
@@ -61,13 +61,53 @@ const Booking = () => {
       return;
     }
 
+    if (typeof window.Razorpay === "undefined") {
+      setError("Payment gateway failed to load. Please check your connection and try again.");
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const res = await createBooking({ slotId, numberOfDevotees, darshanType });
-      navigate(`/booking-confirmation/${res.data.booking._id}`);
+      const orderRes = await createPaymentOrder({ slotId, numberOfDevotees, darshanType });
+      const { orderId, amount, currency, keyId } = orderRes.data;
+
+      const razorpay = new window.Razorpay({
+        key: keyId,
+        amount,
+        currency,
+        order_id: orderId,
+        name: "DarshanEase",
+        description: `${slot.darshanName} · ${slot.temple?.templeName || ""}`,
+        theme: { color: "#064e4a" },
+        prefill: {},
+        handler: async (response) => {
+          try {
+            const verifyRes = await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            navigate(`/booking-confirmation/${verifyRes.data.booking._id}`);
+          } catch (err) {
+            setError(err.response?.data?.message || "Payment verification failed. Please try again.");
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+          },
+        },
+      });
+
+      razorpay.on("payment.failed", () => {
+        setError("Payment failed. Please try again.");
+        setSubmitting(false);
+      });
+
+      razorpay.open();
     } catch (err) {
       setError(err.response?.data?.message || "Booking failed. Please try again.");
-    } finally {
       setSubmitting(false);
     }
   };
@@ -141,7 +181,7 @@ const Booking = () => {
           </div>
 
           <button type="submit" className="btn btn-gold btn-block" style={{ marginTop: "1.4rem" }} disabled={submitting || maxSeats === 0}>
-            {submitting ? "Confirming Booking..." : "Confirm Booking"}
+            {submitting ? "Processing Payment..." : "Pay & Book"}
           </button>
           <p className="muted-link" style={{ textAlign: "center" }}>
             Changed your mind? <Link to={`/temples/${slot.temple?._id}`}>Back to temple</Link>
